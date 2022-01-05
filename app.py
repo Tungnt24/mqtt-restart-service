@@ -28,7 +28,7 @@ def main():
                 service_name = client.get("client_id")
                 logger.info("Restart service %s", service_name)
                 restart_service(service_name)
-        time.sleep(1)
+        time.sleep(5)
 
 
 if __name__ == "__main__":
