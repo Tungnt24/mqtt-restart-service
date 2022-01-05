@@ -24,7 +24,7 @@ def main():
     while True:
         clients = get_client_offline(Config.api, Config.headers)
         for client in clients:
-            if int(client.get("offline_messages")) > Config.offline_message:
+            if int(client.get("offline_messages")) >= Config.offline_message:
                 service_name = client.get("client_id")
                 logger.info("Restart service %s", service_name)
                 restart_service(service_name)
