@@ -9,4 +9,3 @@ class Config:
     headers = env.json("HEADERS")
     delay = env.int("DELAY")
     offline_message = env.int("OFFLINE_MESSAGE")
-    services = env.list("SERVICES")

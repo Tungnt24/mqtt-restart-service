@@ -17,9 +17,8 @@ def get_client_offline(url: str, headers: dict) -> List:
 
 
 def restart_service(service_name: str) -> None:
-    if service_name in Config.services:
-        subprocess.run(["supervisorctl", "restart", service_name])
-    return
+    subprocess.run(["supervisorctl", "restart", service_name])
+
 
 
 def main():
