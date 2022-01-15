@@ -16,19 +16,35 @@ def get_client_offline(url: str, headers: dict) -> List:
     return result
 
 
-def restart_service(service_name: str) -> None:
-    subprocess.run(["supervisorctl", "restart", service_name])
+def handle_services(subcribe_services: List[str], publish_services: List[str]) -> None:
+    publish_service_names = " ".join(publish_services)
+    subcribe_service_names = " ".join(subcribe_services)
 
+    logger.info("Stop services %s", publish_service_names)
+    subprocess.run(["supervisorctl", "stop", publish_service_names])
+
+    time.sleep(2)
+    logger.info("Restart services %s", subcribe_service_names)
+    subprocess.run(["supervisorctl", "restart", subcribe_service_names])
+
+    time.sleep(2)
+    logger.info("Start services %s", publish_service_names)
+    subprocess.run(["supervisorctl", "start", publish_service_names])
 
 
 def main():
     while True:
-        clients = get_client_offline(Config.api, Config.headers)
-        for client in clients:
-            if int(client.get("offline_messages")) >= Config.offline_message:
-                service_name = client.get("client_id")
-                logger.info("Restart service %s", service_name)
-                restart_service(service_name)
+        offline_clients = get_client_offline(Config.api, Config.headers)
+        offline_messages = [client.get("offline_messages")
+                            for client in offline_clients]
+
+        if sum(offline_messages) >= Config.offline_message:
+            subcribe_services = []
+            for client in offline_clients:
+                client_id = client.get("client_id")
+                if client.get("client_id") in Config.subcribe_services:
+                    subcribe_services.append(client_id)
+            handle_services(subcribe_services, Config.publish_services)
         time.sleep(Config.delay)
 
 
