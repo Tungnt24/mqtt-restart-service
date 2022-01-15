@@ -43,9 +43,10 @@ def main():
             subcribe_services = []
             for client in offline_clients:
                 client_id = client.get("client_id")
-                logger.info("Client id: %s", client_id)
-                if client.get("client_id") in Config.subcribe_services:
+                if client_id in Config.subcribe_services:
                     subcribe_services.append(client_id)
+            if not subcribe_services:
+                continue
             handle_services(subcribe_services, Config.publish_services)
         time.sleep(Config.delay)
 
